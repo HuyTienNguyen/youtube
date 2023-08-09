@@ -10,7 +10,7 @@ export class RefreshTokenDto {
 export class LoginUserDto {
   @IsNotEmpty()
   @IsEmail()
-  email:string;
+  username:string;
 
   @IsString()
   @IsNotEmpty()

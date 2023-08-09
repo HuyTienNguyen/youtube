@@ -23,10 +23,10 @@ export class AuthController {
     @Post('register')
     @HttpCode(HttpStatus.OK)
     async register(@Body() registerUserDto:RegisterUserDto):Promise<User> {
-        const isEmailUnique = await this.authService.isEmailUnique(registerUserDto.email);
+        const isUsernamelUnique = await this.authService.isUsernameUnique(registerUserDto.email);
 
-        if(!isEmailUnique){
-            throw new HttpException('Email is already taken', HttpStatus.BAD_REQUEST);
+        if(!isUsernamelUnique){
+            throw new HttpException('Username is already taken', HttpStatus.BAD_REQUEST);
         }else {
             return this.authService.register(registerUserDto);
         }

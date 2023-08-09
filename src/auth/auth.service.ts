@@ -22,11 +22,11 @@ export class AuthService {
     async login(loginUserDto : LoginUserDto): Promise<any> {
         const user = await this.userRepository.findOne(
             {
-                where: {email: loginUserDto.email}
+                where: {email: loginUserDto.username}
             }
         )
         if(!user){
-            throw new HttpException("Email is not exist",HttpStatus.UNAUTHORIZED);
+            throw new HttpException("Username is not exist",HttpStatus.UNAUTHORIZED);
         }
         const checkPass = bcrypt.compareSync(loginUserDto.password, user.password);
         if(!checkPass){
@@ -34,7 +34,7 @@ export class AuthService {
         }
         //generate access_token and refresh_token
         const payload = {id: user.id, email:user.email};
-        const accessTokenExpireAt = Date.now() + (Number(process.env.ACCESS_TOKEN_EXPIRE_IN_SEC) * 1000);
+        const expired_at = Date.now() + (Number(process.env.ACCESS_TOKEN_EXPIRE_IN_SEC) * 1000);
         const access_token = generateAccessToken(payload, {
             expiresIn: Number(process.env.ACCESS_TOKEN_EXPIRE_IN_SEC),
         });
@@ -42,7 +42,7 @@ export class AuthService {
             expiresIn: Number(process.env.REFRESH_TOKEN_EXPIRE_IN_SEC),
         });
 
-        return {access_token, refresh_token, accessTokenExpireAt};
+        return {access_token, refresh_token, expired_at};
 
     }
 
@@ -65,9 +65,9 @@ export class AuthService {
         }
     }
 
-    async isEmailUnique(email: string): Promise<boolean> {
-        const userWithSameEmail = await this.userRepository.findOne({ where: { email } });
-        if(!userWithSameEmail ){
+    async isUsernameUnique(username: string): Promise<boolean> {
+        const userWithSameUsername = await this.userRepository.findOne({ where: { username } });
+        if(!userWithSameUsername ){
             return true ;
         }else {
             return false;
