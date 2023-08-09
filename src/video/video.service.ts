@@ -106,21 +106,23 @@ export class VideoService {
 
                 existingLike.status = USER_LIKE_STATUS.UNLIKE;
                 await existingLike.save();
-            } else {
-                // User chưa ấn like hoặc đã ấn unlike, tăng likeCount của video
+            } else if(existingLike && existingLike.status === USER_LIKE_STATUS.UNLIKE){
+                // user đã ấn unlike ròi, ấn thêm 1 cái nữa thì staus của video là null
+                await existingLike.remove(); 
+
+            }
+            else {
+                // User chưa ấn like , tăng likeCount của video
                 video.likeCount += 1;
                 await video.save();
-                if (existingLike) {
-                    existingLike.status = USER_LIKE_STATUS.LIKE;
-                    await existingLike.save();
-                } else {
-                    const newLike = new UserLike();
-                    newLike.userId = userId;
-                    newLike.videoId = videoId;
-                    newLike.status = USER_LIKE_STATUS.LIKE;
-                    await newLike.save();
-                }
-            }
+                const newLike = new UserLike();
+                newLike.userId = userId;
+                newLike.videoId = videoId;
+                newLike.status = USER_LIKE_STATUS.LIKE;
+                await newLike.save();
+            }    
+                
+            
         } else {
             throw new HttpException("video with videoId not exist", HttpStatus.NOT_FOUND);
         }
