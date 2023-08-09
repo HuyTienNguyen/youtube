@@ -22,7 +22,7 @@ export class AuthService {
     async login(loginUserDto : LoginUserDto): Promise<any> {
         const user = await this.userRepository.findOne(
             {
-                where: {email: loginUserDto.username}
+                where: {username: loginUserDto.username}
             }
         )
         if(!user){
