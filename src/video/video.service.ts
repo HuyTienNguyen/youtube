@@ -58,6 +58,7 @@ export class VideoService {
                     .where("userLike.userId = :userId", { userId: userId })
                     .andWhere("userLike.videoId = :videoId", { videoId: video.id })
                     .getOne();
+                    
                   if (existingLike) {
                       if (existingLike.status === USER_LIKE_STATUS.LIKE) {
                           videoWithStatus.reactVideo = true;
@@ -102,7 +103,9 @@ export class VideoService {
                 // User đã ấn like, chuyển thành unlike và giảm likeCount của video
                 video.likeCount -=1 ; 
                 await video.save();
-                await existingLike.remove(); 
+
+                existingLike.status = USER_LIKE_STATUS.UNLIKE;
+                await existingLike.save();
             } else {
                 // User chưa ấn like hoặc đã ấn unlike, tăng likeCount của video
                 video.likeCount += 1;
