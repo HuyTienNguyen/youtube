@@ -7,7 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { dataSourceOptions } from 'db/data-source';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { VideoModule } from "./video/video.module";
-// import { SocketGateway } from "./socket.gateway";
+import { SocketGateway } from "./socket.gateway";
 import { WebsocketService } from "./websocket/websocket.service";
 @Module({
   imports: [
@@ -20,7 +20,7 @@ import { WebsocketService } from "./websocket/websocket.service";
   controllers: [AppController],
   providers: [
     AppService,
-    // SocketGateway,
+    SocketGateway,
     WebsocketService
   ],
   exports: [WebsocketService]

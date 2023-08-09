@@ -5,20 +5,14 @@ import * as io from 'socket.io';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
-  const server = await app.listen(5000);
-  const socketServer = new io.Server(server);
-  socketServer.on('connection', (socket) => {
-    console.log('one user connected');
-
-
-    socket.on('videoShared', (data) => {
-      console.log('User', data.userId, 'shared video', data.videoId);
-    });
-
-    socket.on('disconnect', () => {
-      console.log('User disconnected');
-    });
+  app.enableCors({
+    origin: 'http://localhost:3000', 
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true, 
   });
+
+  const server = await app.listen(5000);
+
+
 }
 bootstrap();

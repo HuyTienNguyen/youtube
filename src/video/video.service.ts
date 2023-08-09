@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { CreateVideoDto } from "./dto/create-video.dto";
 import { Video } from "./entity/video.entity";
-import { Like, Repository  } from "typeorm";
+import { In, Like, Repository  } from "typeorm";
 import { User } from "src/user/entitties/user.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { FilterVideoDto } from "./dto/filter-video.dto";
@@ -131,7 +131,7 @@ export class VideoService {
 
 
 // ======================handle user  shared video and send notification for every one ========
-    async sharedVideo(userId: number, videoId: number): Promise<{ success: boolean; message?: string }> {
+    async sharedVideo(userId: number, videoId: number): Promise<{ success: boolean; message?: string; video?: Video | undefined}> {
         try {
             // check whether video was shared? avoid case video shared duplicated by user
             const isVideoShared = await this.shareRepository
@@ -146,11 +146,14 @@ export class VideoService {
             }
 
             await this.shareRepository.save({ userId, videoId, shareDate: new Date() });
-            // const video = await  this.videoRepository
-            //   .createQueryBuilder("video")
-            //   .where("video.id = :videoId", {videoId: videoId})
-            //   .getOne();
-            return { success: true };
+
+            const video = await this.videoRepository
+            .createQueryBuilder("video")
+            .where("video.id = :videoId", { videoId: videoId })
+            .getOne();
+
+            
+            return { success: true, video};
         } catch (error) {
             console.error("Error in sharedVideo:", error);
             return { success: false, message: "Error occurred while sharing the video." };
@@ -166,7 +169,8 @@ export class VideoService {
           .addSelect('video.id')
           .where("share.userId = :userId", { userId: userId })
           .getRawMany();
-        console.log("shares       ",shares);
+
+ 
 
         const videoIds = shares.map((share) => share.video_id);
 

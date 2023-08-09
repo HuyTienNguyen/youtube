@@ -2,7 +2,7 @@ import { Injectable,HttpException, HttpStatus } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/entitties/user.entity';
 import { Repository } from 'typeorm';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { LoginUserDto, RefreshTokenDto, RegisterUserDto } from "./dto/auth.dto";
 import { generateAccessToken, generateRefreshToken, hashPassword, verifyRefreshJWT } from "../utils/constants";
 @Injectable()

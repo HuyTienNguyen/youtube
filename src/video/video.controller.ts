@@ -22,13 +22,14 @@ import { Socket } from 'socket.io';
 import * as io from 'socket.io';
 import { WebsocketService } from "../websocket/websocket.service";
 import { verifyRefreshJWT } from "../utils/constants";
+import { log } from "console";
 @Controller('videos')
 export class VideoController {
 
 
     constructor(
       private videoService: VideoService,
-      @Inject(WebsocketService) private readonly websocketService: WebsocketService,
+      private readonly websocketService: WebsocketService,
 
     ){}
 
@@ -76,18 +77,26 @@ export class VideoController {
     @UsePipes(ValidationPipe)
     @UseGuards(AuthGuard)
     @HttpCode(HttpStatus.OK)
-    async shareVideo(@Req() req: any, @Param('videoId') videoId: string ){
+    async shareVideo(@Req() req: any, @Param('videoId') videoId: string ): Promise<{ success: boolean; message?: string; video?: Video }>{
         const userId = req['user_data'].id;
         const videoIsShared = await this.videoService.sharedVideo(Number(userId), Number(videoId));
-        if(videoIsShared.success){
-            // this.websocketService.emitEventToAll('videoShared', { userId, videoId });
-            const socket: Socket = req['socket'];
+  
 
-            // Gửi thông báo tới tất cả các kết nối
-            socket.emit('videoShared', { userId, videoId });
-        }
-        return {
-            success: true
+        if(videoIsShared.success=== true ){
+            const user = req['user_data'];;
+            console.log("user     ", user);
+            
+            const video = videoIsShared.video;
+            console.log("video     ", video);
+            
+            this.websocketService.emitEventToAll('videoShared', {
+                userId: user.id,
+                videoId: video.id,
+                message: `${user.username} đã chia sẻ video ${video.title}`
+            });
+
+            return { success: true, message: "Video has shared and notification for everyone." };
+
         }
     }
 
