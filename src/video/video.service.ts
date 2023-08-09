@@ -42,7 +42,7 @@ export class VideoService {
                     title:Like('%' + search+'%')
                 }
             ],
-            order: {createdAt:"DESC"},
+            order: {createdAt:"ASC"},
             take: _limit,
             skip: skip,
         })
