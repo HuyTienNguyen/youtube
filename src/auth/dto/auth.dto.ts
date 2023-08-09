@@ -37,6 +37,4 @@ export class RegisterUserDto {
 
   date_of_birth: string ;
 
-
-
 }

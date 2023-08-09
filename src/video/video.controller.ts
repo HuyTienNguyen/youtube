@@ -39,7 +39,7 @@ export class VideoController {
     createVideo(@Req() req: any,@Body() createVideoDto: CreateVideoDto) {
         const videoIsCreated =  this.videoService.createVideo(req['user_data'].id,createVideoDto);
         return {
-            success: true,
+            // success: true, 
             content: videoIsCreated
         }
     }
@@ -60,14 +60,13 @@ export class VideoController {
                 }
             } catch (error) {
                 return {
-                    success: false,
                     message: 'Token verification failed',
                 };
             }
         }
         const videoSet= await this.videoService.findAll(query, Number(userId));
         return {
-            success: true,
+            // success: true,
             content: videoSet,
         };
 

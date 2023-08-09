@@ -141,10 +141,10 @@ export class VideoService {
             }
 
             await this.shareRepository.save({ userId, videoId, shareDate: new Date() });
-            const video = await  this.videoRepository
-              .createQueryBuilder("video")
-              .where("video.id = :videoId", {videoId: videoId})
-              .getOne();
+            // const video = await  this.videoRepository
+            //   .createQueryBuilder("video")
+            //   .where("video.id = :videoId", {videoId: videoId})
+            //   .getOne();
             return { success: true };
         } catch (error) {
             console.error("Error in sharedVideo:", error);
